@@ -31,9 +31,9 @@ case `uname -sr` in
 		;;
 	*)
 		MY_AC_VER=
-		MY_AM_VER=
+		MY_AM_VER=-1.14
 		AUTOCONF_VERSION=2.60
-		AUTOMAKE_VERSION=1.9
+		AUTOMAKE_VERSION=1.14
 		export AUTOCONF_VERSION
 		export AUTOMAKE_VERSION
 		;;
@@ -46,9 +46,9 @@ check_for_app aclocal${MY_AM_VER}
 
 echo "Generating the configure script ..."
 
-aclocal${MY_AM_VER} -I autoconf
+aclocal${MY_AM_VER} --install --force -I autoconf
 autoconf${MY_AC_VER}
 autoheader${MY_AC_VER}
-automake${MY_AM_VER} --add-missing --copy 2>/dev/null
+automake${MY_AM_VER} --add-missing --force --copy 2>/dev/null
 
 exit 0

@@ -17,8 +17,6 @@ AC_CANONICAL_HOST
 # check existence of the package
 AC_CONFIG_SRCDIR([main/asterisk.c])
 
-AC_CONFIG_AUX_DIR(`pwd`)
-
 AC_COPYRIGHT("Asterisk")
 AC_REVISION($Revision$)
 
