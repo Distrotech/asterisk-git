@@ -748,10 +748,6 @@ PBX_FREETDS
 FREETDS_DIR
 FREETDS_INCLUDE
 FREETDS_LIB
-PBX_SUPPSERV
-SUPPSERV_DIR
-SUPPSERV_INCLUDE
-SUPPSERV_LIB
 PBX_OPENSSL
 OPENSSL_DIR
 OPENSSL_INCLUDE
@@ -1029,6 +1025,10 @@ PBX_JACK
 JACK_DIR
 JACK_INCLUDE
 JACK_LIB
+PBX_SUPPSERV
+SUPPSERV_DIR
+SUPPSERV_INCLUDE
+SUPPSERV_LIB
 PBX_ISDNNET
 ISDNNET_DIR
 ISDNNET_INCLUDE
@@ -1312,7 +1312,8 @@ with_iksemel
 with_imap
 with_inotify
 with_iodbc
-with_isdnnet
+with_isdnnet_1
+with_suppserv_1
 with_jack
 with_jansson
 with_uriparser
@@ -1356,7 +1357,6 @@ with_sqlite
 with_sqlite3
 with_srtp
 with_ssl
-with_suppserv
 with_tds
 with_termcap
 with_timerfd
@@ -2049,7 +2049,8 @@ Optional Packages:
   --with-imap=PATH        use UW IMAP Toolkit files in PATH
   --with-inotify=PATH     use inotify support files in PATH
   --with-iodbc=PATH       use iODBC files in PATH
-  --with-isdnnet=PATH     use ISDN4Linux files in PATH
+  --with-isdnnet-1=PATH   use ISDN4Linux files in PATH
+  --with-suppserv-1=PATH  use mISDN Supplemental Services files in PATH
   --with-jack=PATH        use Jack Audio Connection Kit files in PATH
   --with-jansson=PATH     use Jansson JSON library files in PATH
   --with-uriparser=PATH   use uriparser library files in PATH
@@ -2096,7 +2097,6 @@ Optional Packages:
   --with-sqlite3=PATH     use SQLite files in PATH
   --with-srtp=PATH        use Secure RTP files in PATH
   --with-ssl=PATH         use OpenSSL Secure Sockets Layer files in PATH
-  --with-suppserv=PATH    use mISDN Supplemental Services files in PATH
   --with-tds=PATH         use FreeTDS files in PATH
   --with-termcap=PATH     use Termcap files in PATH
   --with-timerfd=PATH     use timerfd files in PATH
@@ -3573,36 +3573,6 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 # check existence of the package
 
 
-ac_aux_dir=
-for ac_dir in `pwd` "$srcdir"/`pwd`; do
-  if test -f "$ac_dir/install-sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install-sh -c"
-    break
-  elif test -f "$ac_dir/install.sh"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/install.sh -c"
-    break
-  elif test -f "$ac_dir/shtool"; then
-    ac_aux_dir=$ac_dir
-    ac_install_sh="$ac_aux_dir/shtool install -c"
-    break
-  fi
-done
-if test -z "$ac_aux_dir"; then
-  as_fn_error $? "cannot find install-sh, install.sh, or shtool in \`pwd\` \"$srcdir\"/\`pwd\`" "$LINENO" 5
-fi
-
-# These three variables are undocumented and unsupported,
-# and are intended to be withdrawn in a future Autoconf release.
-# They can cause serious problems if a builder's source tree is in a directory
-# whose full name contains unusual characters.
-ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
-ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
-ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
-
-
-
 
 
 
@@ -4686,7 +4656,7 @@ astsbindir='${sbindir}'
 astetcdir='${sysconfdir}/asterisk'
 astheaderdir='${includedir}/asterisk'
 astlibdir='${libdir}'
-astmoddir='${libdir}/asterisk/modules'
+astmoddir='${libdir}/asterisk/modules-13'
 astmandir='${mandir}'
 astvarlibdir='${localstatedir}/lib/asterisk'
 astdatadir='${astvarlibdir}'
@@ -9161,12 +9131,12 @@ fi
 
 
     ISDNNET_DESCRIP="ISDN4Linux"
-    ISDNNET_OPTION="isdnnet"
+    ISDNNET_OPTION="isdnnet-1"
     PBX_ISDNNET=0
 
-# Check whether --with-isdnnet was given.
-if test "${with_isdnnet+set}" = set; then :
-  withval=$with_isdnnet;
+# Check whether --with-isdnnet-1 was given.
+if test "${with_isdnnet_1+set}" = set; then :
+  withval=$with_isdnnet_1;
 	case ${withval} in
 	n|no)
 	USE_ISDNNET=no
@@ -9180,6 +9150,38 @@ if test "${with_isdnnet+set}" = set; then :
 	*)
 	ISDNNET_DIR="${withval}"
 	ac_mandatory_list="${ac_mandatory_list} ISDNNET"
+	;;
+	esac
+
+fi
+
+
+
+
+
+
+
+
+    SUPPSERV_DESCRIP="mISDN Supplemental Services"
+    SUPPSERV_OPTION="suppserv-1"
+    PBX_SUPPSERV=0
+
+# Check whether --with-suppserv-1 was given.
+if test "${with_suppserv_1+set}" = set; then :
+  withval=$with_suppserv_1;
+	case ${withval} in
+	n|no)
+	USE_SUPPSERV=no
+	# -1 is a magic value used by menuselect to know that the package
+	# was disabled, other than 'not found'
+	PBX_SUPPSERV=-1
+	;;
+	y|ye|yes)
+	ac_mandatory_list="${ac_mandatory_list} SUPPSERV"
+	;;
+	*)
+	SUPPSERV_DIR="${withval}"
+	ac_mandatory_list="${ac_mandatory_list} SUPPSERV"
 	;;
 	esac
 
@@ -11252,38 +11254,6 @@ if test "${with_ssl+set}" = set; then :
 	*)
 	OPENSSL_DIR="${withval}"
 	ac_mandatory_list="${ac_mandatory_list} OPENSSL"
-	;;
-	esac
-
-fi
-
-
-
-
-
-
-
-
-    SUPPSERV_DESCRIP="mISDN Supplemental Services"
-    SUPPSERV_OPTION="suppserv"
-    PBX_SUPPSERV=0
-
-# Check whether --with-suppserv was given.
-if test "${with_suppserv+set}" = set; then :
-  withval=$with_suppserv;
-	case ${withval} in
-	n|no)
-	USE_SUPPSERV=no
-	# -1 is a magic value used by menuselect to know that the package
-	# was disabled, other than 'not found'
-	PBX_SUPPSERV=-1
-	;;
-	y|ye|yes)
-	ac_mandatory_list="${ac_mandatory_list} SUPPSERV"
-	;;
-	*)
-	SUPPSERV_DIR="${withval}"
-	ac_mandatory_list="${ac_mandatory_list} SUPPSERV"
 	;;
 	esac
 
@@ -13477,7 +13447,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -13523,7 +13493,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -13547,7 +13517,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -13592,7 +13562,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -13616,7 +13586,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -21677,14 +21647,14 @@ if test "x${PBX_ISDNNET}" != "x1" -a "${USE_ISDNNET}" != "no"; then
    else
       ast_ext_lib_check_save_CFLAGS="${CFLAGS}"
       CFLAGS="${CFLAGS} "
-      as_ac_Lib=`$as_echo "ac_cv_lib_isdnnet_${pbxfuncname}" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${pbxfuncname} in -lisdnnet" >&5
-$as_echo_n "checking for ${pbxfuncname} in -lisdnnet... " >&6; }
+      as_ac_Lib=`$as_echo "ac_cv_lib_isdnnet-1_${pbxfuncname}" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${pbxfuncname} in -lisdnnet-1" >&5
+$as_echo_n "checking for ${pbxfuncname} in -lisdnnet-1... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lisdnnet ${pbxlibdir} -lmISDN -lpthread $LIBS"
+LIBS="-lisdnnet-1 ${pbxlibdir} -lmISDN -lpthread $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -21726,7 +21696,7 @@ fi
 
    # now check for the header.
    if test "${AST_ISDNNET_FOUND}" = "yes"; then
-      ISDNNET_LIB="${pbxlibdir} -lisdnnet -lmISDN -lpthread"
+      ISDNNET_LIB="${pbxlibdir} -lisdnnet-1 -lmISDN -lpthread"
       # if --with-ISDNNET=DIR has been specified, use it.
       if test "x${ISDNNET_DIR}" != "x"; then
          ISDNNET_INCLUDE="-I${ISDNNET_DIR}/include"
@@ -21781,14 +21751,14 @@ if test "x${PBX_SUPPSERV}" != "x1" -a "${USE_SUPPSERV}" != "no"; then
    else
       ast_ext_lib_check_save_CFLAGS="${CFLAGS}"
       CFLAGS="${CFLAGS} "
-      as_ac_Lib=`$as_echo "ac_cv_lib_suppserv_${pbxfuncname}" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${pbxfuncname} in -lsuppserv" >&5
-$as_echo_n "checking for ${pbxfuncname} in -lsuppserv... " >&6; }
+      as_ac_Lib=`$as_echo "ac_cv_lib_suppserv-1_${pbxfuncname}" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${pbxfuncname} in -lsuppserv-1" >&5
+$as_echo_n "checking for ${pbxfuncname} in -lsuppserv-1... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lsuppserv ${pbxlibdir}  $LIBS"
+LIBS="-lsuppserv-1 ${pbxlibdir}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -21830,7 +21800,7 @@ fi
 
    # now check for the header.
    if test "${AST_SUPPSERV_FOUND}" = "yes"; then
-      SUPPSERV_LIB="${pbxlibdir} -lsuppserv "
+      SUPPSERV_LIB="${pbxlibdir} -lsuppserv-1 "
       # if --with-SUPPSERV=DIR has been specified, use it.
       if test "x${SUPPSERV_DIR}" != "x"; then
          SUPPSERV_INCLUDE="-I${SUPPSERV_DIR}/include"
@@ -21960,8 +21930,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     fi
 
 
-   ac_fn_c_check_header_mongrel "$LINENO" "linux/mISDNdsp.h" "ac_cv_header_linux_mISDNdsp_h" "$ac_includes_default"
-if test "x$ac_cv_header_linux_mISDNdsp_h" = xyes; then :
+   ac_fn_c_check_header_mongrel "$LINENO" "mISDN/mISDNdsp.h" "ac_cv_header_mISDN_mISDNdsp_h" "$ac_includes_default"
+if test "x$ac_cv_header_mISDN_mISDNdsp_h" = xyes; then :
 
 cat >>confdefs.h <<_ACEOF
 #define MISDN_1_2 1
@@ -33497,7 +33467,7 @@ asterisk config.status trunk
 configured by $0, generated by GNU Autoconf 2.69,
   with options \\"\$ac_cs_config\\"
 
-Copyright (C) 2012 Free Software Foundation, Inc.
+Copyright (C)  Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
