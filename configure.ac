@@ -48,7 +48,7 @@ AC_SUBST([astsbindir],        ['${sbindir}'])dnl
 AC_SUBST([astetcdir],         ['${sysconfdir}/asterisk'])dnl
 AC_SUBST([astheaderdir],      ['${includedir}/asterisk'])dnl
 AC_SUBST([astlibdir],         ['${libdir}'])dnl
-AC_SUBST([astmoddir],         ['${libdir}/asterisk/modules'])dnl
+AC_SUBST([astmoddir],         ['${libdir}/asterisk/modules-13'])dnl
 AC_SUBST([astmandir],         ['${mandir}'])dnl
 AC_SUBST([astvarlibdir],      ['${localstatedir}/lib/asterisk'])dnl
 AC_SUBST([astdatadir],        ['${astvarlibdir}'])dnl
