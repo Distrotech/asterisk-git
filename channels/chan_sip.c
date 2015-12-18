@@ -15011,7 +15011,7 @@ static int transmit_state_notify(struct sip_pvt *p, struct state_notify_data *da
 
 	add_content(&req, ast_str_buffer(tmp));
 
-	p->pendinginvite = p->ocseq;	/* Remember that we have a pending NOTIFY in order not to confuse the NOTIFY subsystem */
+//	p->pendinginvite = p->ocseq;	/* Remember that we have a pending NOTIFY in order not to confuse the NOTIFY subsystem */
 
 	/* Send as XMIT_CRITICAL as we may never receive a 200 OK Response which clears p->pendinginvite.
 	 *
@@ -15026,7 +15026,7 @@ static int transmit_state_notify(struct sip_pvt *p, struct state_notify_data *da
 	 * If the NOTIFY request fails due to expiration of SIP Timer F (transaction timeout),
 	 * the notifier SHOULD remove the subscription.
 	 */
-	return send_request(p, &req, XMIT_CRITICAL, p->ocseq);
+	return send_request(p, &req, XMIT_UNRELIABLE, p->ocseq);
 }
 
 /*! \brief Notify user of messages waiting in voicemail (RFC3842)
