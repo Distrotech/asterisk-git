@@ -1,0 +1,3 @@
+[submodule "sounds"]
+	path = sounds
+	url = ../asterisk-sounds/
