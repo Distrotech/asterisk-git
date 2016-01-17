@@ -1,3 +1,238 @@
+2016-01-15 19:01 +0000  Asterisk Development Team <asteriskteam@digium.com>
+
+	* asterisk 13.7.0 Released.
+
+2016-01-15 13:01 +0000 [8baf741e38]  Kevin Harwell <kharwell@lunkwill>
+
+	* Release summaries: Add summaries for 13.7.0
+
+2016-01-15 12:57 +0000 [e42707cf4a]  Kevin Harwell <kharwell@lunkwill.digium.internal>
+
+	* Release summaries: Remove previous versions
+
+2016-01-15 12:57 +0000 [e66f043868]  Kevin Harwell <kharwell@lunkwill>
+
+	* .version: Update for 13.7.0
+
+2016-01-15 12:57 +0000 [c3f6147748]  Kevin Harwell <kharwell@lunkwill>
+
+	* .lastclean: Update for 13.7.0
+
+2016-01-15 12:57 +0000 [3086c36c8d]  Kevin Harwell <kharwell@lunkwill>
+
+	* realtime: Add database scripts for 13.7.0
+
+2016-01-12 20:02 +0000  Asterisk Development Team <asteriskteam@digium.com>
+
+	* asterisk 13.7.0-rc3 Released.
+
+2016-01-12 14:02 +0000 [a5cb9e3f1d]  Kevin Harwell <kharwell@lunkwill>
+
+	* Release summaries: Add summaries for 13.7.0-rc3
+
+2016-01-12 14:02 +0000 [8043875fa1]  Kevin Harwell <kharwell@lunkwill.digium.internal>
+
+	* Release summaries: Remove previous versions
+
+2016-01-12 14:02 +0000 [a0e55b01c4]  Kevin Harwell <kharwell@lunkwill>
+
+	* .version: Update for 13.7.0-rc3
+
+2016-01-12 14:02 +0000 [ae3b9d0958]  Kevin Harwell <kharwell@lunkwill>
+
+	* .lastclean: Update for 13.7.0-rc3
+
+2016-01-12 14:02 +0000 [ebc1646def]  Kevin Harwell <kharwell@lunkwill>
+
+	* realtime: Add database scripts for 13.7.0-rc3
+
+2016-01-12 10:36 +0000 [6c5fbd08b8]  Mark Michelson <mmichelson@digium.com>
+
+	* res_sorcery_realtime: Remove leading ^ requirement.
+
+	  res_sorcery_realtime's search-by-regex callback performed a check to
+	  ensure that the passed-in regex began with a caret (^). If it did not,
+	  then no results would be returned.
+
+	  This callback only started to become used when "like" support was added
+	  to PJSIP CLI commands. The CLI command for listing objects would pass an
+	  empty regex ("") to the sorcery backend if no "like" statement was
+	  present. For most sorcery backends, this resulted in returning all
+	  objects. However, for realtime, this resulted in returning no objects.
+
+	  This commit seeks to fix the regression by removing the requirement from
+	  res_sorcery_realtime for the passed-in-regex to begin with a caret.
+
+	  ASTERISK-25689 #close
+	  Reported by Marcelo Terres
+
+	  Change-Id: I22b4dc5d7f3f11bb29ac2e42ef94682e9bab3b20
+
+2016-01-08 15:22 +0000 [20b22635dc]  Kevin Harwell <kharwell@digium.com>
+
+	* pbx: Deadlock between contexts container and context_merge locks
+
+	  Recent changes (ASTERISK-25394 commit 2bd27d12223fe33b58c453965ed5c6ed3af7c4f5)
+	  introduced the possibility of a deadlock. Due to the mentioned modifications
+	  ast_change_hints now needs to keep both merge/delete and state callbacks from
+	  occurring while it executes. Unfortunately, sometimes ast_change_hints can be
+	  called with the contexts container locked. When this happens it's possible for
+	  another thread to grab the context_merge_lock before the thread calling into
+	  ast_change_hints does and then try to obtain the contexts container lock. This
+	  of course causes a deadlock between the two threads. The thread calling into
+	  ast_change_hints waits for the other thread to release context_merge_lock and
+	  the other thread is waiting on that one to release the contexts container lock.
+
+	  Unfortunately, there is not a great way to fix this problem. When hints change,
+	  the subsequent state callbacks cannot run at the same time as a merge/delete,
+	  nor when the usual state callbacks do. This patch alleviates the problem by
+	  having those particular callbacks (the ones run after a hint change) occur in a
+	  serialized task. By moving the context_merge_lock to a task it can now safely be
+	  attempted or held without a deadlock occurring.
+
+	  ASTERISK-25640 #close
+	  Reported by: Krzysztof Trempala
+
+	  Change-Id: If2210ea241afd1585dc2594c16faff84579bf302
+
+2016-01-08 11:49 +0000 [21a9bc1b81]  Joshua Colp <jcolp@digium.com>
+
+	* res_rtp_asterisk: Revert DTLS negotiation changes.
+
+	  Due to locking issues within pjnath these changes are being
+	  reverted until pjnath can be changed.
+
+	  ASTERISK-25645
+
+	  Revert "res_rtp_asterisk.c: Fix DTLS negotiation delays."
+
+	  This reverts commit 24ae124e4f7310cfa64c187b944b2ffc060da28d.
+
+	  Change-Id: I2986cfb2c43dc14455c1bcaf92c3804f9da49705
+
+	  Revert "res_rtp_asterisk: Resolve further timing issues with DTLS negotiation"
+
+	  This reverts commit 965a0eee46d24321f74c244e23c5a5f45e67e12b.
+
+	  Change-Id: Ie68fafde27dad4b03cb7a1e27ce2a8502c3f7bbe
+
+2016-01-07 09:39 +0000 [0766192ee4]  Corey Farrell <git@cfware.com>
+
+	* ast_format_cap_append_by_type: Resolve codec reference leak.
+
+	  This resolves a reference leak caused by ASTERISK-25535.  The pointer
+	  returned by ast_format_get_codec is saved so it can be released.
+
+	  ASTERISK-25664 #close
+
+	  Change-Id: If9941b1bf4320b2c59056546d6bce9422726d1ec
+
+2015-12-18 18:18 +0000  Asterisk Development Team <asteriskteam@digium.com>
+
+	* asterisk 13.7.0-rc2 Released.
+
+2015-12-18 12:18 +0000 [a93a5387d4]  Kevin Harwell <kharwell@lunkwill>
+
+	* Release summaries: Add summaries for 13.7.0-rc2
+
+2015-12-18 12:18 +0000 [8e201b742a]  Kevin Harwell <kharwell@lunkwill.digium.internal>
+
+	* Release summaries: Remove previous versions
+
+2015-12-18 12:18 +0000 [5a164c70f2]  Kevin Harwell <kharwell@lunkwill>
+
+	* .version: Update for 13.7.0-rc2
+
+2015-12-18 12:18 +0000 [e039eca0a7]  Kevin Harwell <kharwell@lunkwill>
+
+	* .lastclean: Update for 13.7.0-rc2
+
+2015-12-18 12:18 +0000 [bfe2eb8751]  Kevin Harwell <kharwell@lunkwill>
+
+	* realtime: Add database scripts for 13.7.0-rc2
+
+2015-12-16 11:25 +0000 [805297783d]  Mark Michelson <mmichelson@digium.com>
+
+	* Alembic: Add PJSIP global keep_alive_interval.
+
+	  The keep_alive_interval option was added about a year ago, but no
+	  alembic revision was created to add the appropriate column to the
+	  database.
+
+	  This commit fixes the problem and adds the column. This was discovered
+	  by running the testsuite with automatic conversion to realtime enabled.
+
+	  Change-Id: If3ef92a7c4f4844d08f8aae170d2178aec5c4c1a
+
+2015-12-16 11:28 +0000 [63df9bb560]  Mark Michelson <mmichelson@digium.com>
+
+	* Alembic: Increase column size of PJSIP AOR "contact".
+
+	  When running the PJSIP AMI "show_endpoint" test with automatic
+	  conversion to realtime, the test would fail. This was because the AOR
+	  "contact" column was sized at 40, and the configured contact was larger
+	  than that.
+
+	  This commit increases the size of the contact column to 255 characters.
+
+	  Change-Id: Ia65bc7fd37699b7c0eaef9629a1a31eab9a24ba1
+
+2015-12-14 12:04 +0000 [acd19d5f1f]  Joshua Colp <jcolp@digium.com>
+
+	* json: Audit ast_json_* usage for thread safety.
+
+	  The JSON library Asterisk uses, jansson, is not thread
+	  safe for us in a few ways. To help with this wrappers for JSON
+	  object reference count increasing and decreasing were added
+	  which use a global lock to ensure they don't clobber over
+	  each other. This does not extend to reference count manipulation
+	  within the jansson library itself. This means you can't safely
+	  use the object borrowing specifier (O) in ast_json_pack and
+	  you can't share JSON instances between objects.
+
+	  This change removes uses of the O specifier and replaces them
+	  with the o specifier and an explicit ast_json_ref. Some cases
+	  of instance sharing have also been removed.
+
+	  ASTERISK-25601 #close
+
+	  Change-Id: I06550d8b0cc1bfeb56cab580a4e608ae4f1ec7d1
+
+2015-12-05 10:01 +0000 [11ff4e6b3f]  Joshua Colp <jcolp@digium.com>
+
+	* res_sorcery_memory_cache: Add support for a full backend cache.
+
+	  This change introduces the configuration option 'full_backend_cache'
+	  which changes the cache to be a full mirror of the backend instead
+	  of a per-object cache. This allows all sorcery retrieval operations
+	  to be carried out against it and is useful for object types which
+	  are used in a "retrieve all" or "retrieve some" pattern.
+
+	  ASTERISK-25625 #close
+
+	  Change-Id: Ie2993487e9c19de563413ad5561c7403b48caab5
+	  (cherry picked from commit 59d5bb0613810418f2a618b9a6dee5bcfd45767e)
+
+2015-12-17 10:25 +0000 [9bc1e49325]  Joshua Colp <jcolp@digium.com>
+
+	* rtp_engine: Ignore empty filenames in DTLS configuration.
+
+	  When applying an empty DTLS configuration the filenames in the
+	  configuration will be empty. This is actually valid to do and
+	  each filename should simply be ignored.
+
+	  Change-Id: Ib761dc235638a3fb701df337952f831fc3e69539
+
+2015-12-17 08:10 +0000 [c78eb1e82b]  Joshua Colp <jcolp@digium.com>
+
+	* chan_sip: Enable WebSocket support by default.
+
+	  Per the documentation the WebSocket support in chan_sip is
+	  supposed to be enabled by default but is not. This change
+	  corrects that.
+
+	  Change-Id: Icb02bbcad47b11a795c14ce20a9bf29649a54423
+
 2015-12-15 18:01 +0000  Asterisk Development Team <asteriskteam@digium.com>
 
 	* asterisk 13.7.0-rc1 Released.
